@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}</style>
+<title>AI-н сүүлийн хоёр жил</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Oswald:wght@500;600&display=swap">
+<style>
+/* Layout: one 64rem column. Hero with a four-figure strip, an eight-row direction index that also filters,
+   then a rail-style release log with a sticky filter bar. Accent (rose) marks only the newest items and the active filter. */
+:root{
+  --bg:#ECEFED; --surface:#F7F9F8; --ink:#121B18; --muted:#4F5F59; --line:#C6CFCB; --accent:#C2255C;
+  --c-model:#2B59C3; --c-agent:#0F766E; --c-open:#4D7C0F; --c-media:#C2570C;
+  --c-science:#7C3AED; --c-hw:#5B6472; --c-robot:#6B4A2B; --c-policy:#A16207;
+  --display:'Oswald','Arial Narrow',Impact,sans-serif;
+  --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1613; --surface:#17211C; --ink:#E6EEEA; --muted:#9AAAA3; --line:#2B3833; --accent:#FF6B9A;
+    --c-model:#7FA4FF; --c-agent:#4FD1C5; --c-open:#9AD94F; --c-media:#FF9A5C;
+    --c-science:#B79BFF; --c-hw:#A9B3C2; --c-robot:#D4A574; --c-policy:#F2C14E;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1613; --surface:#17211C; --ink:#E6EEEA; --muted:#9AAAA3; --line:#2B3833; --accent:#FF6B9A;
+  --c-model:#7FA4FF; --c-agent:#4FD1C5; --c-open:#9AD94F; --c-media:#FF9A5C;
+  --c-science:#B79BFF; --c-hw:#A9B3C2; --c-robot:#D4A574; --c-policy:#F2C14E;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.6 var(--body);-webkit-font-smoothing:antialiased}
+a{color:var(--ink)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:64rem;margin-inline:auto;padding-inline:clamp(16px,4vw,40px);padding-block:clamp(2rem,6vw,4rem) 4rem;display:grid;gap:clamp(3rem,7vw,5rem)}
+h1,h2,h3,h4,p,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+h2{font:600 clamp(1.8rem,4vw,2.4rem)/1.1 var(--display);text-wrap:balance}
+
+[data-cat="model"]{--c:var(--c-model)}
+[data-cat="agent"]{--c:var(--c-agent)}
+[data-cat="open"]{--c:var(--c-open)}
+[data-cat="media"]{--c:var(--c-media)}
+[data-cat="science"]{--c:var(--c-science)}
+[data-cat="hw"]{--c:var(--c-hw)}
+[data-cat="robot"]{--c:var(--c-robot)}
+[data-cat="policy"]{--c:var(--c-policy)}
+.dot{display:inline-block;width:.65rem;height:.65rem;border-radius:50%;background:var(--c,var(--muted));flex:none}
+
+/* Hero */
+.hero{display:grid;gap:1.5rem}
+.eyebrow{font:500 .8rem/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font:600 clamp(3.4rem,13vw,8rem)/.9 var(--display);letter-spacing:-.01em;text-wrap:balance}
+.lede{max-width:40rem;font-size:1.15rem}
+.yearjump{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.yearjump span{font:500 .8rem var(--mono);color:var(--muted);margin-right:.25rem}
+.yearjump a{font:500 .9rem var(--mono);text-decoration:none;border:1px solid var(--line);border-radius:4px;padding:.35rem .8rem}
+.yearjump a:hover{border-color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:1.5rem;margin-top:.5rem}
+.stats li{border-top:3px solid var(--ink);padding-top:.75rem;display:grid;gap:.4rem;align-content:start;min-width:0}
+.stats li:first-child{border-top-color:var(--accent)}
+.num{font:600 clamp(2rem,5vw,2.8rem)/1 var(--display);font-variant-numeric:tabular-nums}
+.stats p{font-size:.9rem;color:var(--muted)}
+.range{display:flex;height:6px;background:var(--line);max-width:100%}
+.range span{display:block;height:100%}
+.range .from{background:var(--muted)}
+.range .gain{background:var(--accent)}
+.statsrc{font:.78rem/1.5 var(--mono);color:var(--muted)}
+.statsrc a{color:var(--muted);text-underline-offset:3px}
+
+/* Direction index */
+.sec-head{display:grid;gap:.6rem;margin-bottom:1.25rem}
+.sec-head p{color:var(--muted);max-width:42rem}
+.trends{border-bottom:1px solid var(--line)}
+.trend{display:grid;grid-template-columns:13rem minmax(0,1fr) auto;gap:.5rem 2rem;align-items:start;width:100%;text-align:left;
+  background:transparent;color:inherit;font:inherit;border:0;border-top:1px solid var(--line);padding:1rem .75rem 1rem 0;cursor:pointer}
+.trend:hover{background:var(--surface)}
+.trend[aria-pressed="true"]{background:var(--surface);box-shadow:inset 3px 0 0 var(--accent);padding-left:.9rem}
+.tn{display:flex;gap:.6rem;align-items:center;font-weight:600;line-height:1.35}
+.td{font-size:.95rem;color:var(--muted);max-width:52ch}
+.tc{font:500 .78rem/1.6 var(--mono);color:var(--muted);white-space:nowrap}
+
+/* Timeline */
+.bar{display:grid;gap:.5rem;padding-block:.75rem;background:var(--bg);border-bottom:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{display:inline-flex;gap:.45rem;align-items:center;font:500 .8rem/1.3 var(--mono);padding:.35rem .6rem;
+  border:1px solid var(--line);border-radius:4px;background:transparent;color:var(--ink);cursor:pointer}
+.chip b{font-weight:500;color:var(--muted)}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-pressed="true"] b{color:inherit;opacity:.7}
+.shown{font:.78rem var(--mono);color:var(--muted)}
+@media (min-width:720px){.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}}
+
+.year{scroll-margin-top:7rem}
+.yh{display:flex;align-items:baseline;gap:1rem;margin:2.5rem 0 1.25rem}
+.yr{font:600 clamp(3rem,9vw,5.5rem)/.9 var(--display);font-variant-numeric:tabular-nums}
+.yn{font:.8rem var(--mono);color:var(--muted)}
+
+.ev{display:grid;grid-template-columns:5.5rem 1.5rem minmax(0,1fr);grid-template-areas:"d rail b";gap:0 1rem;padding-bottom:1.6rem;--dt:.45rem}
+.d{grid-area:d;font:500 .85rem/1.9 var(--mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.rail{grid-area:rail;position:relative}
+.rail::before{content:"";position:absolute;left:50%;top:var(--dt);bottom:calc(-1.6rem - .45rem);width:1px;background:var(--line)}
+.rail i{position:absolute;left:50%;top:var(--dt);width:.7rem;height:.7rem;margin-left:-.35rem;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px var(--bg)}
+.ev.last .rail::before{display:none}
+.ev.new .rail i{background:var(--accent);box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--accent)}
+.b{grid-area:b;min-width:0;display:grid;gap:.15rem}
+.tag{display:inline-flex;gap:.45rem;align-items:center;font:500 .72rem/1.4 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tag .dot{background:var(--c)}
+.newtag{color:var(--accent);margin-left:.4rem}
+.b h4{font:600 1.05rem/1.4 var(--body);text-wrap:balance}
+.b p{max-width:60ch}
+.src{font:.78rem/1.5 var(--mono);margin-top:.25rem}
+.src a{color:var(--muted);text-underline-offset:3px;margin-right:.9rem;overflow-wrap:anywhere}
+@media (max-width:560px){
+  .ev{grid-template-columns:1rem minmax(0,1fr);grid-template-areas:"rail d" "rail b";gap:0 .75rem;--dt:.3rem}
+  .d{text-align:left;line-height:1.4}
+  .trend{grid-template-columns:1fr;padding-right:0}
+}
+@media (max-width:719px){
+  .trend{grid-template-columns:1fr}
+}
+
+/* Sources */
+details{border-top:1px solid var(--line);padding-top:1rem}
+summary{cursor:pointer;font:500 .9rem var(--mono)}
+.srcs{columns:2 20rem;column-gap:2rem;margin-top:1rem;font-size:.85rem}
+.srcs li{break-inside:avoid;margin-bottom:.6rem;color:var(--muted);overflow-wrap:anywhere}
+.srcs a{color:var(--ink)}
+.note{max-width:60ch;font-size:.9rem;color:var(--muted)}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">2024.10 → 2026.10 · цуглуулсан 2026-10-11</p>
+    <h1>AI-н сүүлийн хоёр жил</h1>
+    <p class="lede">Сүүлийн хоёр жилд AI-д юу болсныг энгийн үгээр, товч тайлбарлав. Чиглэл дээр дарвал тухайн чиглэлийн үйл явдал л үлдэнэ.</p>
+    <nav class="yearjump" aria-label="Жил рүү шилжих"><span>Жил рүү:</span><a href="#y2024">2024</a><a href="#y2025">2025</a><a href="#y2026">2026</a></nav>
+    <ul class="stats">
+      <li>
+        <div class="num">60% → ~100%</div>
+        <div class="range" role="img" aria-label="60%-иас бараг 100% хүртэл"><span class="from" style="width:60%"></span><span class="gain" style="width:40%"></span></div>
+        <p>AI програм бичих даалгавруудыг гүйцэтгэх чадвар нэг жилийн дотор</p>
+      </li>
+      <li><div class="num">88%</div><p>Байгууллагын AI ашиглалт</p></li>
+      <li><div class="num">53%</div><p>Хүн амын хэдэн хувь нь гурван жилд AI ашиглаж эхэлсэн</p></li>
+      <li><div class="num">233 → 362</div><p>AI-тай холбоотой бүртгэгдсэн осол, 2024 → 2025</p></li>
+    </ul>
+    <p class="statsrc">Эх сурвалж: <a href="https://hai.stanford.edu/news/inside-the-ai-index-12-takeaways-from-the-2026-report">Stanford HAI, AI Index 2026</a> (2026-04-13)</p>
+  </header>
+
+  <section aria-labelledby="th">
+    <div class="sec-head">
+      <h2 id="th">Юу өөрчлөгдсөн бэ</h2>
+      <p>Найман чиглэлийн аль нэг дээр дарвал доорх жагсаалт тэр чиглэлээр шүүгдэнэ.</p>
+    </div>
+    <ul class="trends" id="trends"></ul>
+  </section>
+
+  <section id="timeline" aria-labelledby="tl">
+    <div class="sec-head"><h2 id="tl">Цаг хугацааны дараалал</h2></div>
+    <div class="bar">
+      <div class="chips" id="chips" role="group" aria-label="Чиглэлээр шүүх"></div>
+      <p class="shown" id="shown" aria-live="polite"></p>
+    </div>
+    <div id="years"></div>
+  </section>
+
+  <footer style="display:grid;gap:1.25rem">
+    <details>
+      <summary>Эх сурвалж</summary>
+      <ul class="srcs" id="srcs"></ul>
+    </details>
+    <p class="note">Мэдээллийг 2026-10-11-нд вэб хайлтаар цуглуулсан. Зарим огноо, тоо эх сурвалж бүрт өөр байж болно. Хичээл, ажилд ашиглахаасаа өмнө үндсэн эх сурвалжаас нь шалгаарай.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var CATS=[
+    ["model","Загвар","Улам ухаалаг загвар","AI одоо хариулахаасаа өмнө бодож, асуудлыг алхам алхмаар шийддэг болсон. OpenAI, Google, Anthropic хоорондоо өрсөлдөж шинэ загвар гаргасаар байна."],
+    ["agent","Агент","Өөрөө ажил хийдэг AI","AI зөвхөн асуултад хариулахаа больж, програм бичих, хэрэгсэл ашиглах зэрэг олон алхамтай ажлыг өөрөө хийдэг болсон."],
+    ["open","Нээлттэй жин","Хүн бүр ашиглаж болох загвар","Зарим загварыг хүн бүр татаж аваад өөрийн компьютер дээр ажиллуулж болдог. Одоо ийм загваруудын ихэнх нь Хятадаас гарч байна."],
+    ["media","Дуу, дүрс","Дуутай видео","AI одоо дуу хоолойтой, бодит мэт видеог бичсэн тайлбараас нь үүсгэдэг болсон."],
+    ["science","Шинжлэх ухаан","Эрдэмтдийн туслах","AI уураг судлах, математик бодох зэрэгт эрдэмтдэд тусалдаг болж, 2024 онд Нобелийн шагнал хүртсэн."],
+    ["hw","Чип","Чип ба цахилгаан","AI ажиллуулахад маш олон чип, их цахилгаан хэрэгтэй. Чип үйлдвэрлэдэг Nvidia-гийн орлого огцом өссөн."],
+    ["robot","Робот","Хүнтэй төстэй робот","Хүний дүртэй робот үйлдвэрт ажиллаж эхэлсэн ч ихэнх нь одоо ч туршилтын шатандаа байна."],
+    ["policy","Хууль","Хууль, эрсдэл","Улс орнууд AI-г хэрхэн зохицуулах талаар маргаж, зарим хуулийг хойшлуулсан. AI-тай холбоотой осол нэмэгдсэн."]
+  ];
+
+  var EV=[
+    ["2024-10","science","AI-д Нобелийн шагнал","Физикийн шагналыг Хинтон, Хопфилд нар хиймэл нейрон сүлжээний ажлаараа, химийн шагналыг Хассабис, Жампер, Бэйкер нар уургийн хэлбэрийг таамагладаг AlphaFold-оороо хүртсэн.",["https://www.computing.co.uk/news/2024/ai/ai-pioneers-win-2024-nobel-prize-physics-chemistry"]],
+    ["2024-11","agent","MCP: AI-г програмуудтай холбох стандарт","Anthropic AI-г Slack, файл, мэдээллийн сан зэрэг бусад програмтай холбох нэг нийтлэг дүрмийг (MCP) гаргасан. Дараа нь OpenAI, Google, Microsoft ч үүнийг ашиглаж эхэлсэн.",["https://guptadeepak.com/research/mcp-enterprise-guide-2025/"]],
+    ["2025-01","open","DeepSeek R1","Хятадын DeepSeek компани OpenAI-н загвартай ойролцоо чадвартай, хямд зардлаар бүтээсэн загвараа үнэгүй нээлттэй болгосон. Энэ нь дэлхийн AI зах зээлийг шоконд оруулсан.",["https://www.asiaiplaw.com/section/news-analysis/deepseeks-cost-effective-ai-model-challenges-industry-giants"]],
+    ["2025-01","hw","Nvidia-гийн хувьцаа нэг өдөрт унав","DeepSeek-ийн мэдээний дараа Nvidia-гийн хувьцаа 17% буурч, нэг өдөрт ойролцоогоор $590 тэрбум алдсан. Хямд зардлаар AI бүтээж болох юм бол чип цөөн хэрэгтэй болох вий гэж хөрөнгө оруулагчид айсан.",["https://en.paperjam.lu/article/what-drove-nvidias-540bn-single-day-crash"]],
+    ["2025-02","agent","Claude Code","Anthropic програм бичдэг AI-г компьютерийн командын мөрөнд ажиллуулдаг Claude Code-ыг гаргасан. Хөгжүүлэгчид AI-д ажлаа даалгаж эхэлсэн.",["https://ecosistemastartup.com/ingenieria-de-software-2026-68-de-devs-usa-ia-diariamente/"]],
+    ["2025-05","media","Veo 3","Google-ийн Veo 3 видеог дуу хоолой, дуу чимээтэй нь хамт үүсгэдэг анхны том загвар болсон.",["https://tech.yahoo.com/ai/chatgpt/articles/openais-sora-vs-googles-veo-100000532.html"]],
+    ["2025-07","science","Математикийн олимпиадад алтан медалийн түвшин","Google болон OpenAI-н загварууд олон улсын математикийн олимпиадын 6 бодлогын 5-ыг бодож, алтан медалийн оноо авсан. Өмнөх жил мөнгөн медалийн түвшинд байсан.",["https://www.euronews.com/2025/07/22/did-google-deepmind-or-openai-win-gold-at-the-worlds-most-prestigious-math-competition"]],
+    ["2025-08","model","GPT-5","OpenAI GPT-5-ыг гаргасан. Өмнө нь тусдаа байсан энгийн болон «бодогч» загваруудыг нэг болгосон.",["https://en.wikipedia.org/wiki/GPT-5"]],
+    ["2025-09","media","Sora 2","OpenAI-н Sora 2 дуутай видеог бодит байдалд улам ойртуулж, өөрийн дүрийг видеонд оруулдаг «Cameos» функцтэй гарсан.",["https://www.dataiads.io/en/blog/la-revolution-de-la-generation-video-par-lia-en-2025---openai-sora-2-google-veo-3-1-meta-movie-gen-qui-va-gagner-la-bataille-le-benchmark-complet-2025"]],
+    ["2025-11","model","Gemini 3","Google Gemini 3-ыг гаргасан. Гарахдаа олон шалгуурт өрсөлдөгчөө гүйцэж, Google Хайлтад шууд орсон.",["https://en.wikipedia.org/wiki/Gemini_3_(AI)"]],
+    ["2025-12","agent","MCP нээлттэй сангийн мэдэлд шилжив","Anthropic MCP-г Linux Foundation-ийн шинэ сан руу шилжүүлсэн. Ингэснээр нэг компанийнх биш, бүх хүнийх болсон.",["https://www.createwith.com/tool/claude/updates/anthropic-donates-model-context-protocol-to-linux-foundation-under-new-agentic-a"]],
+    ["2025-12","policy","АНУ: штатын AI хуулийг хязгаарлах оролдлого","Ерөнхийлөгч Трамп штатуудын өөрийн AI хуулийг хязгаарлах захирамж гаргасан. Мөн Nvidia-д H200 чипээ Хятадад зарахыг зөвшөөрсөн.",["https://newsletter.safe.ai/p/ai-safety-newsletter-67-trumps-preemption"]],
+    ["2026-02","hw","Nvidia-гийн орлого 68%-иар өссөн","Nvidia-гийн дата төвийн чипээс олсон жилийн орлого $193.7 тэрбум болж, өмнөх жилээс 68% нэмэгдсэн.",["https://vectorshift.ai/research/companies/nvidia/earnings/2026-q4-summary"]],
+    ["2026-04","model","Claude Mythos Preview ба Project Glasswing","Anthropic програм хангамжийн нууц эмзэг цэгийг маш сайн олдог загвараа нийтэд гаргаагүй. Харин Apple, Google, Microsoft зэрэг түншүүддээ програмаа засахад нь туслахаар өгсөн. Олдсон алдаануудын ихэнх нь тэр үед засагдаагүй байсан.",["https://infosecurity-magazine.com/news/anthropic-launch-project-glasswing"]],
+    ["2026-04","open","DeepSeek V4","DeepSeek MIT лицензтэй (чөлөөтэй ашиглах) шинэ V4 загварыг гаргасан. Нээлттэй загваруудын тэргүүн эгнээнд Хятадын лабораториуд байна.",["https://deepseekai.guide/alternatives/best-chinese-ai-models/"]],
+    ["2026-04","policy","Stanford AI Index 2026","Стэнфордын жилийн тайланд АНУ, Хятадын шилдэг загваруудын зөрүү бараг арилсан гэж дүгнэсэн. AI-н осол 233-аас 362 болж өссөн.",["https://hai.stanford.edu/news/inside-the-ai-index-12-takeaways-from-the-2026-report"]],
+    ["2026-06","model","Claude Fable 5 ба Mythos 5","Anthropic Claude Fable 5, Mythos 5-ыг гаргасан. АНУ-ын экспортын хяналтаас болж 6-р сарын 12-нд хандалт түр хаагдаж, 7-р сарын 1-нд сэргэсэн.",["https://www.anthropic.com/news/fable-mythos-access"]],
+    ["2026-06","policy","ЕХ AI хуулийн хугацааг хойшлуулав","Европын Холбоо өндөр эрсдэлтэй AI системд тавих шаардлагын хугацааг 2027–2028 он руу шилжүүлсэн. Хууль цуцлагдаагүй, зөвхөн хугацаа нь хойшилсон.",["https://www.kingsleynapley.co.uk/?p=24423"]],
+    ["2026-07","agent","Хөгжүүлэгчид AI агент ашигладаг болов","JetBrains-ийн судалгаанд оролцсон хөгжүүлэгчдийн 90% нь AI кодын агентыг долоо хоногт дор хаяж нэг удаа ашигладаг гэжээ.",["https://aiunderstanding.org/news/36kr-reports-claude-code-led-github-copilot-in-jetbrains-2026-developer-survey"]],
+    ["2026-07","robot","Робот үйлдвэрт ажиллаж байна","Figure AI, Agility Robotics-ийн роботууд бодитоор үйлдвэрт ажиллаж байгаа нь баталгаатай. Tesla Optimus-ийн үйлдвэрлэлийн тоо баталгаажаагүй байна. Хятадын Unitree 2025 онд 5,500 гаруй робот зарсан.",["https://humanoid.guide/humanoid-deployments-in-2026-favor-figure-and-agility/"]],
+    ["2026-10","model","GPT-6","OpenAI 10-р сарын 7-нд ChatGPT-д GPT-6-г гаргаж эхэлсэн. Хариулт нь график, товч бүхий харилцан үйлчилгээтэй хэлбэртэй болсон.",["https://letsdatascience.com/news/openai-brings-gpt-6-and-intelligent-ui-to-chatgpt-4f0d797c"]]
+  ];
+
+  var FROM="2024-10";
+  EV=EV.filter(function(e){return e[0]>=FROM});
+  var $=function(s){return document.querySelector(s)};
+  var cat={};CATS.forEach(function(c){cat[c[0]]={s:c[1],t:c[2],d:c[3]}});
+  var count={};EV.forEach(function(e){count[e[1]]=(count[e[1]]||0)+1});
+  var maxYm=EV.reduce(function(m,e){return e[0]>m?e[0]:m},"");
+  var host=function(u){try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
+
+  $("#trends").innerHTML=CATS.map(function(c){
+    return '<li><button class="trend" type="button" data-cat="'+c[0]+'" data-k="'+c[0]+'" aria-pressed="false">'+
+      '<span class="tn"><i class="dot"></i>'+c[2]+'</span><span class="td">'+c[3]+'</span>'+
+      '<span class="tc">'+count[c[0]]+' үйл явдал →</span></button></li>';
+  }).join("");
+
+  $("#chips").innerHTML='<button class="chip" type="button" data-k="all" aria-pressed="true">Бүгд <b>'+EV.length+'</b></button>'+
+    CATS.map(function(c){
+      return '<button class="chip" type="button" data-cat="'+c[0]+'" data-k="'+c[0]+'" aria-pressed="false"><i class="dot"></i>'+c[1]+' <b>'+count[c[0]]+'</b></button>';
+    }).join("");
+
+  var years=[];EV.forEach(function(e){var y=e[0].slice(0,4);if(years.indexOf(y)<0)years.push(y)});
+  $("#years").innerHTML=years.map(function(y){
+    var items=EV.filter(function(e){return e[0].slice(0,4)===y});
+    return '<section class="year" id="y'+y+'"><h3 class="yh"><span class="yr">'+y+'</span><span class="yn">'+items.length+' үйл явдал</span></h3><ol>'+
+      items.map(function(e){
+        var isNew=e[0]===maxYm;
+        return '<li class="ev'+(isNew?' new':'')+'" data-cat="'+e[1]+'">'+
+          '<time class="d" datetime="'+e[0]+'">'+e[0].replace("-","·")+'</time>'+
+          '<span class="rail"><i></i></span>'+
+          '<div class="b"><span class="tag"><i class="dot"></i>'+cat[e[1]].s+(isNew?'<span class="newtag">· шинэ</span>':'')+'</span>'+
+          '<h4>'+e[2]+'</h4><p>'+e[3]+'</p>'+
+          '<p class="src">'+e[4].map(function(u){return '<a href="'+u+'">↗ '+host(u)+'</a>'}).join("")+'</p></div></li>';
+      }).join("")+'</ol></section>';
+  }).join("");
+
+  var bySrc={},order=[];
+  EV.forEach(function(e){e[4].forEach(function(u){if(!bySrc[u]){bySrc[u]=[];order.push(u)}bySrc[u].push(e[2])})});
+  $("#srcs").innerHTML=order.map(function(u){
+    return '<li><a href="'+u+'">'+host(u)+'</a> — '+bySrc[u].join(", ")+'</li>';
+  }).join("")+'<li><a href="https://hai.stanford.edu/news/inside-the-ai-index-12-takeaways-from-the-2026-report">hai.stanford.edu</a> — Нүүр хэсгийн 4 тоо (AI Index 2026); <a href="https://www.thedeepview.com/articles/ai-s-surge-is-widening-gaps-in-trust-and-policy">thedeepview.com</a> — 88% нэвтрүүлэлт</li>';
+
+  var cur="all";
+  function apply(k){
+    cur=k;
+    document.querySelectorAll(".chip,.trend").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.k===k))});
+    var shown=0;
+    document.querySelectorAll(".year").forEach(function(y){
+      var n=0,last=null;
+      y.querySelectorAll(".ev").forEach(function(e){
+        var on=k==="all"||e.dataset.cat===k;
+        e.hidden=!on;e.classList.remove("last");
+        if(on){n++;last=e}
+      });
+      if(last)last.classList.add("last");
+      y.hidden=n===0;
+      y.querySelector(".yn").textContent=n+" үйл явдал";
+      shown+=n;
+    });
+    $("#shown").textContent=k==="all"?"Нийт "+EV.length+" үйл явдал":cat[k].s+": "+shown+" / "+EV.length+" үйл явдал";
+  }
+  document.querySelectorAll(".chip").forEach(function(b){
+    b.addEventListener("click",function(){var k=b.dataset.k;apply(k===cur&&k!=="all"?"all":k)});
+  });
+  document.querySelectorAll(".trend").forEach(function(b){
+    b.addEventListener("click",function(){
+      apply(b.dataset.k);
+      var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      $("#timeline").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+    });
+  });
+  apply("all");
+})();
+</script>
+</body>
+</html>
